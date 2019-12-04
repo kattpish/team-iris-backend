@@ -1,0 +1,31 @@
+{
+  "name": "custom-server-koa",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node ./server/index.js",
+    "build": "next build",
+    "start": "NODE_ENV=production nodemon ./server/index.js"
+  },
+  "dependencies": {
+    "cross-env": "^6.0.3",
+    "dotenv": "^8.2.0",
+    "joi": "^14.3.1",
+    "koa": "^2.0.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.1.0",
+    "mongoose": "^5.7.12",
+    "next": "latest",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.7.2",
+    "eslint-config-koa": "^2.0.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
