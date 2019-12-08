@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 const crypto = require('crypto')
 
+const { generateToken } = require('../../lib/token')
+
 function hash(password) {
     return crypto.createHmac('sha256', process.env.SECRET_KEY).update(password).digest('hex')
 }
@@ -18,7 +20,7 @@ const Profile = new Schema({
 
 const Account = new Schema({
     profile: [Profile],
-    email: String,
+    email: String,  
     password: String,
     verified: Boolean,
     createdAt: {
@@ -27,19 +29,12 @@ const Account = new Schema({
     }
 })
 
-Account.statics.findByUsername = function(username) {
-    return this.findOne({ 'profile.username': username }).exec()
-}
-
 Account.statics.findByEmail = function(email) {
     return this.findOne({ email }).exec()
 }
 
-Account.statics.localRegister = function({ username, email, password }) {
+Account.statics.localRegister = function({ email, password }) {
     const account = new this({
-        profile: {
-            username            
-        },
         email,
         password: hash(password)
     })
@@ -50,6 +45,15 @@ Account.statics.localRegister = function({ username, email, password }) {
 Account.methods.validatePassword = function(password) {
     const hashed = hash(password)
     return this.password === hashed
+}
+
+Account.methods.generateToken = function() {
+    const payload = {
+        _id: this._id,
+        profile: this.profile
+    }
+
+    return generateToken(payload)
 }
 
 module.exports = mongoose.model('Account', Account)
