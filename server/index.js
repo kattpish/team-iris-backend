@@ -11,6 +11,10 @@ const dev = process.env.NODE_ENV !== 'production'
 const mongoose = require('mongoose')
 const bodyParser = require('koa-bodyparser')
 
+const app = new Koa()
+const router = new Router()
+const api = require('./api')
+
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -18,9 +22,6 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => { console.log('Successfully connected to mongodb') })
 .catch(e => { console.error(e) })
 
-const app = new Koa()
-const router = new Router()
-const api = require('./api')
 
 router.all('*', async ctx => {
     await handle(ctx.req, ctx.res)
@@ -43,8 +44,6 @@ const token = jwt.sign({ foo: 'bar' }, 'secret-key', { expiresIn: '7d' }, (err, 
         console.log(err)
         return
     }
-
-    console.log(token)
 })
 
 
