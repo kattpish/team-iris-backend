@@ -1,107 +1,87 @@
 const Joi = require('joi')
 const Account = require('../models/account')
 
+const { hash } = require('../../lib/hash')
+
+const schema = Joi.object().keys({
+  email: Joi.string().email().required(),
+  password: Joi.string().required().min(6)
+})
+
+function schemaValidator (item) {
+  return Joi.validate(item, schema)
+}
+
 exports.localRegister = async (ctx) => {
-    const schema = Joi.object().keys({
-        email: Joi.string().email().required(),
-        password: Joi.string().required().min(6)
-    })
+  const result = schemaValidator(ctx.request.body)
 
-    const result = Joi.validate(ctx.request.body, schema)
+  if (result.error) {
+    ctx.status = 400
+    ctx.body = { error: 'Bad Form' }
+    return
+  }
 
-    if(result.error) {
-        ctx.status = 400
-    }
+  const existing = await Account.findByEmail(ctx.request.body.email)
+  if (existing) {
+    ctx.status = 409
+    ctx.body = 'Email Overlapped'
+    return
+  }
 
-    let existing = null
-    try {
-        existing = await Account.findByEmail(ctx.request.body.email)
-    } catch(e) {
-        throw(500, e)
-    }
+  const { email, password } = ctx.request.body
 
-    if(existing) {
-        ctx.status = 409
-        ctx.body = 'Email Overlapped'
-        return
-    }
+  const account = new Account({
+    email,
+    password: hash(password)
+  })
 
-    let account = null
-    try {
-        account = await Account.localRegister(ctx.request.body)
-    } catch (e) {
-        ctx.throw(500, e)
-    }
+  const saving = await account.save().exec()
+  if (saving.errors) {
+    ctx.status = 400
+    ctx.body = 'Saving Error'
+  }
 
-    let token = null
-    try {
-        token = await account.generateToken()
-    } catch(e) {
-        ctx.throw(500, e)
-    }
-
-    ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
-    ctx.body = account
+  const token = await account.generateToken()
+  ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
+  ctx.body = account
 }
 
 exports.localLogin = async (ctx) => {
-    const schema = Joi.object().keys({
-        email: Joi.string().email().required(),
-        password: Joi.string().required()
-    })
+  const result = schemaValidator(ctx.request.body)
+  if (result.error) {
+    ctx.status = 400
+    ctx.body = { error: 'Bad Form' }
+    return
+  }
 
-    const result = Joi.validate(ctx.request.body, schema)
+  const { email, password } = ctx.request.body
 
-    if(result.error) {
-        ctx.status = 400
-        return
-    }
+  const account = await Account.findByEmail(email)
+  if (!account || !account.validatePassword(password)) {
+    ctx.status = 403
+    ctx.body = 'Wrong Account or Password'
+    return
+  }
 
-    const { email, password } = ctx.request.body
+  const token = await account.generateToken()
 
-    let account = null
-    try {
-        account = await Account.findByEmail(email)
-    } catch(e) {
-        ctx.throw(500, e)
-    }
-
-    if(!account || !account.validatePassword(password)) {
-        ctx.status = 403
-        return
-    }
-
-    let token = null
-    try {
-        token = await account.generateToken()
-    } catch(e) {
-        ctx.throw(500, e)
-    }
-
-    ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
-    ctx.body = account
+  ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
+  ctx.body = account
 }
 
 exports.exists = async (ctx) => {
-    console.log(ctx.params)
-    const email = ctx.params.value
+  const email = ctx.params.value
+  const existing = await Account.findByEmail(email)
 
-    let existing = null
-    try {
-        existing = await Account.findByEmail(email)
-    } catch(e) {
-        ctx.throw(500, e)
-    }
-
-    ctx.body = {
-        exists: existing !== null
-    }
+  ctx.body = {
+    exists: existing !== null
+  }
 }
 
 exports.logout = async (ctx) => {
-    ctx.cookies.set('access_token', null, {
-        maxAge: 0,
-        httpOnly: true
-    })
-    ctx.status = 204
+  ctx.cookies.set('access_token', null, {
+    maxAge: 0,
+    httpOnly: true
+  })
+  ctx.status = 204
 }

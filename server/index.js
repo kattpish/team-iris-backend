@@ -1,12 +1,9 @@
-/* eslint-disable semi */
-/* eslint-disable require-atomic-updates */
 require('dotenv').config()
 
 const Koa = require('koa')
 const Router = require('koa-router')
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
 
 const mongoose = require('mongoose')
 const bodyParser = require('koa-bodyparser')
@@ -16,37 +13,22 @@ const router = new Router()
 const api = require('./api')
 
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
-.then(() => { console.log('Successfully connected to mongodb') })
-.catch(e => { console.error(e) })
-
-
-router.all('*', async ctx => {
-    await handle(ctx.req, ctx.res)
-    ctx.respond = false
-})
+  .then(() => { console.log('Successfully connected to mongodb') })
+  .catch(e => { console.error(e) })
 
 app.use(async (ctx, next) => {
-    ctx.res.statusCode = 200
-    await next()
+  ctx.res.statusCode = 200
+  await next()
 })
 
 app.use(bodyParser())
 
-app.use(api.routes())
+app.use(api.routes()).use(api.allowedMethods())
 app.use(router.routes()).use(router.allowedMethods())
 
-const jwt = require('jsonwebtoken')
-const token = jwt.sign({ foo: 'bar' }, 'secret-key', { expiresIn: '7d' }, (err, token) => {
-    if(err) {
-        console.log(err)
-        return
-    }
-})
-
-
 app.listen(port, () => {
-    console.log(`> Ready on http://localhost:${port}`)
+  console.log(`> Ready on http://localhost:${port}`)
 })

@@ -1,59 +1,51 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
-const crypto = require('crypto')
 
 const { generateToken } = require('../../lib/token')
+const { hash } = require('../../lib/hash')
 
-function hash(password) {
-    return crypto.createHmac('sha256', process.env.SECRET_KEY).update(password).digest('hex')
-}
-
-const Profile = new Schema({
-    fullName: String,
+const schema = new Schema({
+  profile: {
+    fullName: { type: String },
     thumbnail: {
-        type: String,
-        default: '/static/images/default_thumbnail.png'
+      type: String,
+      default: '/static/images/default_thumbnail.png'
     },
-    position: String,
-    description: String
+    position: { type: String },
+    description: { type: String }
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  verified: { type: Boolean }
+},
+{
+  timestamps: true
 })
 
-const Account = new Schema({
-    profile: [Profile],
-    email: String,  
-    password: String,
-    verified: Boolean,
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-})
+class Account {
+  static findByEmail (email) {
+    return this.findOne({ email })
+  }
 
-Account.statics.findByEmail = function(email) {
-    return this.findOne({ email }).exec()
-}
-
-Account.statics.localRegister = function({ email, password }) {
-    const account = new this({
-        email,
-        password: hash(password)
-    })
-
-    return account.save()
-}
-
-Account.methods.validatePassword = function(password) {
+  validatePassword (password) {
     const hashed = hash(password)
     return this.password === hashed
-}
+  }
 
-Account.methods.generateToken = function() {
+  generateToken () {
     const payload = {
-        _id: this._id,
-        profile: this.profile
+      _id: this._id,
+      profile: this.profile
     }
-
     return generateToken(payload)
+  }
 }
 
-module.exports = mongoose.model('Account', Account)
+schema.loadClass(Account)
+module.exports = mongoose.model('Account', schema)

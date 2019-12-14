@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const auth = new Router({
-    prefix: '/auth'
+  prefix: '/auth'
 })
 const authCtrl = require('./auth.controller')
 
