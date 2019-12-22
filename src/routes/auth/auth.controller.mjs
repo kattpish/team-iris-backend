@@ -35,7 +35,9 @@ export const login = async ctx => {
 
   const { email, password } = result.value
 
-  const account = await Account.findOne({ email }).exec()
+  const account = await Account.findOne({ email })
+    .select('+password')
+    .exec()
 
   if (!account || !(await account.validatePassword(password))) {
     throw new createError.NotFound()

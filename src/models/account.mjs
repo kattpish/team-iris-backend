@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
-import generateToken from '../utils/token.mjs'
+import { generateToken } from '../utils/token.mjs'
 
 const accountSchema = new mongoose.Schema(
   {
@@ -29,6 +29,10 @@ const accountSchema = new mongoose.Schema(
     verified: {
       type: Boolean,
       default: false
+    },
+    permission: {
+      type: Number,
+      default: 0
     }
   },
   {

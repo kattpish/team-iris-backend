@@ -1,11 +1,11 @@
 import Router from '@koa/router'
-import * as authCtrl from './auth.controller.mjs'
+import * as controllers from './auth.controller.mjs'
 
 const auth = new Router({
   prefix: '/auth'
 })
 
-auth.post('/register', authCtrl.register)
-auth.post('/login', authCtrl.login)
+auth.post('/register', controllers.register)
+auth.post('/login', controllers.login)
 
 export default auth
