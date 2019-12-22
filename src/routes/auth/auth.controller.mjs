@@ -20,8 +20,7 @@ export const register = async ctx => {
     })
     await account.save()
 
-    const token = await account.generateToken()
-    ctx.body = { token }
+    ctx.body = account.toObject()
   } catch (err) {
     throw new createError.BadRequest()
   }
