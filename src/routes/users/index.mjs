@@ -22,7 +22,7 @@ users
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
       ).length === 0
     )
-      throw new createError.BadRequest()
+      throw new createError.NotFound()
   })
   .get('/:email', hasPermission(99), controllers.getUserByEmail)
   .patch('/:email', hasPermission(99), controllers.updateUserByEmail)
