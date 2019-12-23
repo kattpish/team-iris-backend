@@ -16,15 +16,18 @@ users.get('/me', controllers.me)
 users.get('/awaiters', hasPermission(99), controllers.getAwaiters)
 
 users
-  .param('email', (email, ctx, next) => {
+  .param('email', async (email, ctx, next) => {
     if (
       email.match(
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
       ).length === 0
-    )
+    ) {
       throw new createError.NotFound()
+    }
+
+    await next()
   })
   .get('/:email', hasPermission(99), controllers.getUserByEmail)
-  .patch('/:email', hasPermission(99), controllers.updateUserByEmail)
+  .patch('/:email', controllers.updateUserByEmail)
 
 export default users
