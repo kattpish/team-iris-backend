@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt'
 import createError from 'http-errors'
 import Joi from 'joi'
 import Account from '../../models/account.mjs'
@@ -39,7 +40,7 @@ export const updateUserByEmail = async ctx => {
   const email = ctx.params.email
   const user = ctx.state.user
 
-  // jwtParser({ required:true }) 미들웨어가 선행되면 의미없는 조건문
+  // jwtParser({ required: true }) 미들웨어가 선행되면 의미없는 조건문
   if (!user) {
     throw new createError.Unauthorized()
   }
@@ -54,6 +55,12 @@ export const updateUserByEmail = async ctx => {
   if (error) throw new createError.BadRequest()
 
   for (const key in value) {
+    // 패스워드 수정
+    if (key === 'password') {
+      // TODO 토큰 발급 시간이 1분이 안 지났을 경우만 허용 (다시 로그인)
+      user[key] = await bcrypt.hash(value[key])
+      continue
+    }
     user[key] = value[key]
   }
 
