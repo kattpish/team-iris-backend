@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
-import { generateToken } from '../utils/token.mjs'
+import { generateToken } from '../utils/token.js'
 
 const accountSchema = new mongoose.Schema(
   {
@@ -36,6 +36,12 @@ const accountSchema = new mongoose.Schema(
     }
   },
   {
+    toObject: {
+      transform: (doc, ret) => {
+        delete ret.password
+        return ret
+      }
+    },
     timestamps: true
   }
 )

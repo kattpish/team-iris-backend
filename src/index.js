@@ -1,7 +1,7 @@
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import mongoose from 'mongoose'
-import routers from './routes/index.mjs'
+import routers from './routes/index.js'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 

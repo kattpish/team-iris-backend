@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
 import createError from 'http-errors'
 import Joi from 'joi'
-import Account from '../../models/account.mjs'
-import { loginInput, registerInput } from './auth.scheme.mjs'
+import Account from '../../models/account.js'
+import { loginInput, registerInput } from './auth.scheme.js'
 
 export const register = async ctx => {
   const result = Joi.validate(ctx.request.body, registerInput)

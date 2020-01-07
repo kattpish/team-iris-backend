@@ -1,5 +1,5 @@
 import createError from 'http-errors'
-import { parseToken } from '../utils/token.mjs'
+import { parseToken } from '../utils/token.js'
 
 export const jwtParser = ({ required = false }) => async (ctx, next) => {
   const token = ctx.header.Authorization

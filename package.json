@@ -6,8 +6,8 @@
     "node": ">= 13.5.0"
   },
   "scripts": {
-    "start": "node -r dotenv/config src/index.mjs",
-    "dev": "nodemon --exec \"node -r dotenv/config src/index.mjs\""
+    "start": "node -r dotenv/config src/index.js",
+    "dev": "nodemon --exec \"node -r dotenv/config src/index.js\""
   },
   "dependencies": {
     "@koa/multer": "^2.0.1",

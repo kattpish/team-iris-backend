@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt'
 import createError from 'http-errors'
 import Joi from 'joi'
-import Account from '../../models/account.mjs'
-import { updateUserInput } from './users.scheme.mjs'
+import Account from '../../models/account.js'
+import { updateUserInput } from './users.scheme.js'
 
-export const getAllUsers = async ctx => {
+export const getUsers = async ctx => {
   const users = await Account.find()
     .lean()
     .exec()
@@ -14,7 +14,10 @@ export const getAllUsers = async ctx => {
 }
 
 export const me = async ctx => {
-  ctx.body = ctx.state.user
+  if (!ctx.state.user) {
+    throw new createError.Unauthorized()
+  }
+  ctx.body = ctx.state.user.toObject()
 }
 
 export const getUserByEmail = async ctx => {

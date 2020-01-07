@@ -1,19 +1,17 @@
 import Router from '@koa/router'
 import createError from 'http-errors'
-import { hasPermission, jwtParser } from '../../middlewares/index.mjs'
-import * as controllers from './users.controller.mjs'
+import { hasPermission, jwtParser } from '../../middlewares/index.js'
+import * as controllers from './users.controller.js'
 
 const users = new Router({
   prefix: '/users'
 })
 
-users.use(jwtParser({ required: true }))
-
-users.get('/', hasPermission(99), controllers.getAllUsers)
-
-users.get('/me', controllers.me)
-
-users.get('/awaiters', hasPermission(99), controllers.getAwaiters)
+users
+  .use(jwtParser({ required: true }))
+  .get('/', hasPermission(99), controllers.getUsers)
+  .get('/me', controllers.me)
+  .get('/awaiters', hasPermission(99), controllers.getAwaiters)
 
 users
   .param('email', async (email, ctx, next) => {
