@@ -12,5 +12,11 @@ match
     hasPermission(99),
     controllers.createMatches
   )
+  .patch(
+    '/:id',
+    jwtParser({ required: true }),
+    hasPermission(99),
+    controllers.editMatches
+  )
 
 export default match

@@ -1,4 +1,4 @@
-import createError from 'http-errors'
+import createHttpError from 'http-errors'
 import Joi from 'joi'
 import League from '../../models/league.js'
 import { createLeagueInput } from './leagues.scheme.js'
@@ -17,7 +17,7 @@ export const createLeague = async ctx => {
   const result = Joi.validate(ctx.request.body, createLeagueInput)
 
   if (result.error) {
-    throw new createError.BadRequest()
+    throw new createHttpError.BadRequest()
   }
 
   try {
@@ -30,6 +30,6 @@ export const createLeague = async ctx => {
     await league.save()
     ctx.body = league.toObject()
   } catch (err) {
-    throw new createError.BadRequest()
+    throw new createHttpError.BadRequest()
   }
 }

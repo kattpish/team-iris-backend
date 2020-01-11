@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import createError from 'http-errors'
+import createHttpError from 'http-errors'
 import Joi from 'joi'
 import Account from '../../models/account.js'
 import { updateUserInput } from './users.scheme.js'
@@ -15,7 +15,7 @@ export const getUsers = async ctx => {
 
 export const me = async ctx => {
   if (!ctx.state.user) {
-    throw new createError.Unauthorized()
+    throw new createHttpError.Unauthorized()
   }
   ctx.body = ctx.state.user.toObject()
 }
@@ -25,7 +25,7 @@ export const getUserByEmail = async ctx => {
     .lean()
     .exec()
   if (!user) {
-    throw new createError.NotFound()
+    throw new createHttpError.NotFound()
   }
 
   ctx.body = user
@@ -45,17 +45,17 @@ export const updateUserByEmail = async ctx => {
 
   // jwtParser({ required: true }) 미들웨어가 선행되면 의미없는 조건문
   if (!user) {
-    throw new createError.Unauthorized()
+    throw new createHttpError.Unauthorized()
   }
 
   // 본인 계정이 아니면서 관리자도 아닌 경우
   if (user.email !== email && user.permission < 99) {
-    throw new createError.Forbidden()
+    throw new createHttpError.Forbidden()
   }
 
   const { error, value } = Joi.validate(ctx.body, updateUserInput)
 
-  if (error) throw new createError.BadRequest()
+  if (error) throw new createHttpError.BadRequest()
 
   for (const key in value) {
     // 패스워드 수정
@@ -75,7 +75,7 @@ export const updateUserByEmail = async ctx => {
   try {
     await user.save()
   } catch (err) {
-    throw new createError.InternalServerError(err.message)
+    throw new createHttpError.InternalServerError(err.message)
   }
 
   ctx.body = user.toObject()

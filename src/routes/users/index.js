@@ -1,5 +1,5 @@
 import Router from '@koa/router'
-import createError from 'http-errors'
+import createHttpError from 'http-errors'
 import { hasPermission, jwtParser } from '../../middlewares/index.js'
 import * as controllers from './users.controller.js'
 
@@ -20,7 +20,7 @@ users
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
       ).length === 0
     ) {
-      throw new createError.NotFound()
+      throw new createHttpError.NotFound()
     }
 
     await next()

@@ -1,4 +1,4 @@
-import createError from 'http-errors'
+import createHttpError from 'http-errors'
 import { parseToken } from '../utils/token.js'
 
 export const jwtParser = ({ required = false }) => async (ctx, next) => {
@@ -10,13 +10,13 @@ export const jwtParser = ({ required = false }) => async (ctx, next) => {
     return
   } else if (!token) {
     // 토큰이 없는데 required가 참이면
-    throw new createError.Unauthorized()
+    throw new createHttpError.Unauthorized()
   }
 
   try {
     ctx.state.user = await parseToken(token)
   } catch (err) {
-    throw createError(401, err)
+    throw createHttpError(401, err)
   }
 
   await next()
@@ -26,11 +26,11 @@ export const hasPermission = level => async (ctx, next) => {
   const user = ctx.state.user
 
   if (!user) {
-    throw new createError.Unauthorized()
+    throw new createHttpError.Unauthorized()
   }
 
   if (level > user.permission) {
-    throw new createError.Forbidden()
+    throw new createHttpError.Forbidden()
   }
 
   await next()

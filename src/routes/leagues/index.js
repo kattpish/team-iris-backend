@@ -16,6 +16,10 @@ league
     controllers.createLeague
   )
 
-league.use('/:id/matches', matchRouter.routes(), matchRouter.allowedMethods())
+league.use(
+  '/:leagueId/matches',
+  matchRouter.routes(),
+  matchRouter.allowedMethods()
+)
 
 export default league

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import createError from 'http-errors'
+import createHttpError from 'http-errors'
 import Joi from 'joi'
 import Account from '../../models/account.js'
 import { loginInput, registerInput } from './auth.scheme.js'
@@ -8,7 +8,7 @@ export const register = async ctx => {
   const result = Joi.validate(ctx.request.body, registerInput)
 
   if (result.error) {
-    throw new createError.BadRequest()
+    throw new createHttpError.BadRequest()
   }
 
   try {
@@ -22,14 +22,14 @@ export const register = async ctx => {
 
     ctx.body = account.toObject()
   } catch (err) {
-    throw new createError.BadRequest()
+    throw new createHttpError.BadRequest()
   }
 }
 
 export const login = async ctx => {
   const result = Joi.validate(ctx.request.body, loginInput)
   if (result.error) {
-    throw new createError.BadRequest()
+    throw new createHttpError.BadRequest()
   }
 
   const { email, password } = result.value
@@ -39,7 +39,7 @@ export const login = async ctx => {
     .exec()
 
   if (!account || !(await account.validatePassword(password))) {
-    throw new createError.NotFound()
+    throw new createHttpError.NotFound()
   }
 
   const token = await account.generateToken()

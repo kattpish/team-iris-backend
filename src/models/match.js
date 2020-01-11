@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const teamResultSchema = new mongoose.Schema({
-  team: {
+  teamId: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true
   },
@@ -13,7 +13,11 @@ const teamResultSchema = new mongoose.Schema({
 
 const matchSchema = new mongoose.Schema(
   {
-    teams: {
+    leagueId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true
+    },
+    result: {
       type: [teamResultSchema],
       validate: v => v.length === 2
     }
