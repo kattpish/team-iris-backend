@@ -11,11 +11,11 @@ export const createUser = async ctx => {
   const avator = ctx.request.files.avator
   const unlinkAvator = () => fs.promises.unlink(path.resolve(avator.path))
 
-  if (!ctx.request.files) {
+  if (!avator) {
     throw new createHttpError.BadRequest()
   }
 
-  if (result.error) {
+  if (result.error || avator.size === 0) {
     await unlinkAvator()
     throw new createHttpError.BadRequest()
   }

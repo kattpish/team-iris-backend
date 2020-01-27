@@ -1,3 +1,4 @@
+import cors from '@koa/cors'
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import mongoose from 'mongoose'
@@ -20,6 +21,8 @@ mongoose
   .catch(e => {
     console.error(e)
   })
+
+app.use(cors())
 
 app.use(
   koaBody({
