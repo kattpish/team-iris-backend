@@ -3,7 +3,8 @@ import mongoose from 'mongoose'
 const teamSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   logo: {
     type: String,

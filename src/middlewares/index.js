@@ -1,8 +1,9 @@
 import createHttpError from 'http-errors'
+import Account from '../models/account.js'
 import { parseToken } from '../utils/token.js'
 
 export const jwtParser = ({ required = false }) => async (ctx, next) => {
-  const token = ctx.header.Authorization
+  const token = ctx.request.header.authorization
 
   if (!token && !required) {
     // 토큰이 없는데 required가 거짓이면 (default)
@@ -14,7 +15,11 @@ export const jwtParser = ({ required = false }) => async (ctx, next) => {
   }
 
   try {
-    ctx.state.user = await parseToken(token)
+    const userData = await parseToken(token.replace('Bearer ', ''))
+    ctx.state.user = await Account.findOne({ email: userData.email })
+    if (!ctx.state.user) {
+      throw new Error('Wrong token given.')
+    }
   } catch (err) {
     throw createHttpError(401, err)
   }

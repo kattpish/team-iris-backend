@@ -23,7 +23,11 @@ mongoose
 
 app.use(
   koaBody({
-    multipart: true
+    multipart: true,
+    formLimit: '15mb',
+    formidable: {
+      uploadDir: 'uploads/'
+    }
   })
 )
 
@@ -40,11 +44,11 @@ app.use(async (ctx, next) => {
         error: err.message
       }
     } else {
+      console.error(err)
       ctx.status = 500
       ctx.body = {
         error: 'Internal Server Error'
       }
-      console.error(err)
       // TODO log error
     }
   }

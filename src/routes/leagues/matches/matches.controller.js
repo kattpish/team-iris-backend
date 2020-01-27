@@ -4,7 +4,7 @@ import Match from '../../../models/match.js'
 import { createMatchInput } from './matches.scheme.js'
 
 export const createMatches = async ctx => {
-  const result = Joi.validate(ctx.body, createMatchInput)
+  const result = Joi.validate(ctx.request.body, createMatchInput)
 
   if (result.error) {
     throw new createHttpError.BadRequest()

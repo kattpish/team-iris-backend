@@ -10,7 +10,6 @@
     "dev": "nodemon --exec \"node -r dotenv/config src/index.js\""
   },
   "dependencies": {
-    "@koa/multer": "^2.0.1",
     "@koa/router": "^8.0.5",
     "bcrypt": "^3.0.7",
     "dotenv": "^8.2.0",

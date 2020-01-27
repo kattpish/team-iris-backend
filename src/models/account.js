@@ -8,9 +8,13 @@ const accountSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    profileImg: {
+    avator: {
       type: String,
       required: true
+    },
+    team: {
+      type: mongoose.SchemaTypes.ObjectId,
+      default: null
     },
     position: {
       type: String,
@@ -54,7 +58,7 @@ class Account {
   getPublicFields() {
     return {
       name: this.name,
-      profileImg: this.profileImg,
+      avator: this.avator,
       position: this.position,
       email: this.email
     }

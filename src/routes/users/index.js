@@ -8,12 +8,10 @@ const users = new Router({
 })
 
 users
+  .post('/', controllers.createUser)
   .use(jwtParser({ required: true }))
-  .get('/', hasPermission(99), controllers.getUsers)
   .get('/me', controllers.me)
   .get('/awaiters', hasPermission(99), controllers.getAwaiters)
-
-users
   .param('email', async (email, ctx, next) => {
     if (
       email.match(
@@ -27,5 +25,6 @@ users
   })
   .get('/:email', hasPermission(99), controllers.getUserByEmail)
   .patch('/:email', controllers.updateUserByEmail)
+  .get('/', hasPermission(99), controllers.getUsers)
 
 export default users

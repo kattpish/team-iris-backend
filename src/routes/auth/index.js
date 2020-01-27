@@ -5,7 +5,6 @@ const auth = new Router({
   prefix: '/auth'
 })
 
-auth.post('/register', controllers.register)
-auth.post('/login', controllers.login)
+auth.post('/', controllers.login)
 
 export default auth
