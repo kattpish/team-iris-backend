@@ -32,7 +32,7 @@ const accountSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      default: false
+      default: null
     },
     permission: {
       type: Number,

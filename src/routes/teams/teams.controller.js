@@ -15,7 +15,8 @@ export const createTeam = async ctx => {
   try {
     const newTeam = new Team({
       name: result.value.name,
-      logo: logo.path
+      logo: logo.path,
+      coach: result.value.coach
     })
     await newTeam.save()
     ctx.body = newTeam.toObject()

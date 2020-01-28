@@ -9,6 +9,10 @@ const teamSchema = new mongoose.Schema({
   logo: {
     type: String,
     default: null
+  },
+  coach: {
+    type: String,
+    default: ''
   }
 })
 
